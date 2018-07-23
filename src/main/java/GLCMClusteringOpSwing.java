@@ -46,7 +46,8 @@ public class GLCMClusteringOpSwing extends AbstractOp {
 	@Parameter
 	ThreadService thread;
 
-	private static GLCMClusteringDialog dialog = null;
+	//private static GLCMClusteringDialog dialog = null;
+	private static GLCMClusteringFrame dialog = null;
 
 	@Parameter(type = ItemIO.OUTPUT)
 	RandomAccessibleInterval<FloatType> deconvolved;
@@ -59,7 +60,7 @@ public class GLCMClusteringOpSwing extends AbstractOp {
 
 		SwingUtilities.invokeLater(() -> {
 			if (dialog == null) {
-				dialog = new GLCMClusteringDialog();
+				dialog = new GLCMClusteringFrame();
 			}
 			dialog.setVisible(true);
 
