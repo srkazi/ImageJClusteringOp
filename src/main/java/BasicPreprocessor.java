@@ -1,13 +1,11 @@
 
-import ij.process.*;
-
 import java.util.*;
 
+import net.imglib2.RandomAccessibleInterval;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 public class BasicPreprocessor implements HaralickImageProcessor {
 
-    private final ImageProcessor original,ip;
     private int m, n, mi, mx, H;
     private double[][] counts, probabilities;
     private double []px,py,p_xpy,p_xmy; //p_{x+y}, p_{x-y}
@@ -23,21 +21,17 @@ public class BasicPreprocessor implements HaralickImageProcessor {
     private static final int W= 8;
 
     public <T extends MatrixTraverser>
-    BasicPreprocessor( ImageProcessor ip, Class<T> traverserImplClass ) {
-        assert ip != null;
-        this.original= ip;
-        //this.ip= original.resize(500);
-        this.ip= original;
-        g= this.ip.getIntArray();
-        traverser= TraverserFactory.buildTraverser(traverserImplClass,m= this.ip.getHeight(),n= this.ip.getWidth());
+    BasicPreprocessor( final RandomAccessibleInterval<Integer> img, Class<T> traverserImplClass ) {
+        assert img.numDimensions() == 2;
+        m= (int)img.max(0);
+        n= (int)img.max(1);
+        g= new int[m][n];
+        traverser= TraverserFactory.buildTraverser(traverserImplClass,m,n);
         setUp();
     }
 
     public <T extends MatrixTraverser>
-    BasicPreprocessor( int[][] window, Class<T> traverserImplClass ) {
-        this.original= null;
-        //this.ip= original.resize(500);
-        this.ip= original;
+    BasicPreprocessor( final int[][] window, Class<T> traverserImplClass ) {
         g= window;
         traverser= TraverserFactory.buildTraverser(traverserImplClass,m= window.length,n= window[0].length);
         setUp();

@@ -36,6 +36,7 @@ public class Utils {
         assert (slidingWindowSize & 1) == 1: String.format("Sliding window size must be odd, %d supplied",slidingWindowSize);
         for ( int i= 0; i < m; ++i )
             for ( int j= 0; j < n; ++j ) {
+                System.out.println(String.format("[%d,%d] sliding window for (%d,%d)",m,n,i,j));
                 int [][]window= new int[2*slidingWindowSize+1][2*slidingWindowSize+1];
                 for ( int x= 0, ni= i-slidingWindowSize; ni <= i+slidingWindowSize; ++ni, ++x )
                     for ( int y= 0, nj= j-slidingWindowSize; nj <= j+slidingWindowSize; ++nj, ++y ) {

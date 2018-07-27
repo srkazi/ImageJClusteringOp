@@ -1,5 +1,6 @@
 import ij.IJ;
 import ij.ImagePlus;
+import ij.WindowManager;
 import ij.io.Opener;
 import ij.plugin.Grid;
 import ij.process.ByteProcessor;
@@ -47,6 +48,7 @@ public class GLCMClusteringFrame extends JFrame {
 	private ImageDisplay display;
 	private OverlayService overlayService;
 	private DatasetService datasetService;
+	private RandomAccessibleInterval<Integer> img;
 
 	private final JPanel contentPanel= new JPanel();
 	private final JTabbedPane tabbedPane= new JTabbedPane();
@@ -138,7 +140,13 @@ public class GLCMClusteringFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				//MultiKMeansPlusPlusImageClusterer clusterer= new MultiKMeansPlusPlusImageClusterer()
 				thread.run( ()-> {
-					int k= Integer.parseInt(formattedTextField.getText());
+					int k= 3;
+					try {
+						k = Integer.parseInt(formattedTextField.getText());
+					} catch ( NumberFormatException nfe ) {
+						throw nfe;
+					}
+					log.info("Read k= "+k);
 					multiKMeansPPClustering(k);
 				});
 			}
@@ -157,14 +165,20 @@ public class GLCMClusteringFrame extends JFrame {
 	}
 
 	public void multiKMeansPPClustering( int k ) {
+	    /*
 		RealRect r= overlayService.getSelectionBounds(display);
 		List<Dataset> list= datasetService.getDatasets();
 		Dataset dataset= list.get(0);
 		Img img= dataset.getImgPlus().getImg();
+		*/
 		//ImageProcessor ip= new ByteProcessor(img);
 		//Map<String,Object> map= imgPlus.getProperties();
-		//MultiKMeansPlusPlusImageClusterer clusterer= new MultiKMeansPlusPlusImageClusterer(ip,k,null);
+		//ImagePlus imagePlus= IJ.getImage();
+		//imageProcessor= imagePlus.getProcessor();
+		MultiKMeansPlusPlusImageClusterer clusterer= new MultiKMeansPlusPlusImageClusterer(img,k,null);
+		log.info("[Launching Clustering]");
 		//clusterer.cluster();
+		log.info("[DONE Clustering]");
 	}
 
 	private JComponent makeDBSCANTab( String dbscan ) {
@@ -404,5 +418,13 @@ public class GLCMClusteringFrame extends JFrame {
 
 	public void setDatasetService(DatasetService datasetService) {
 		this.datasetService = datasetService;
+	}
+
+	public RandomAccessibleInterval<Integer> getImg() {
+		return img;
+	}
+
+	public void setImg(RandomAccessibleInterval<Integer> img) {
+		this.img = img;
 	}
 }

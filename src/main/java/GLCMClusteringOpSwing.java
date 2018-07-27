@@ -8,9 +8,13 @@
 
 import javax.swing.SwingUtilities;
 
+import ij.IJ;
+import ij.ImagePlus;
+import ij.WindowManager;
 import ij.process.ImageProcessor;
 import net.imagej.Data;
 import net.imagej.DatasetService;
+import net.imagej.ImgPlus;
 import net.imagej.display.ImageDisplay;
 import net.imagej.display.OverlayService;
 import net.imagej.ops.AbstractOp;
@@ -22,7 +26,9 @@ import net.imglib2.type.numeric.real.FloatType;
 import org.scijava.ItemIO;
 import org.scijava.app.StatusService;
 import org.scijava.command.Command;
+import org.scijava.command.CommandModule;
 import org.scijava.command.CommandService;
+import org.scijava.command.DynamicCommand;
 import org.scijava.log.LogService;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
@@ -30,9 +36,12 @@ import org.scijava.thread.ThreadService;
 import org.scijava.ui.UIService;
 import org.scijava.util.RealRect;
 
-@Plugin(type = Op.class,
+@Plugin(type = Command.class,
 	menuPath = "Clustering > GLCM Clustering Swing")
-public class GLCMClusteringOpSwing extends AbstractOp {
+public class GLCMClusteringOpSwing implements Command {
+
+	@Parameter
+    private RandomAccessibleInterval<Integer> img;
 
     @Parameter
 	private DatasetService datasetService;
@@ -73,7 +82,6 @@ public class GLCMClusteringOpSwing extends AbstractOp {
 	 */
 	@Override
 	public void run() {
-
 		SwingUtilities.invokeLater(() -> {
 			if (dialog == null) {
 				//dialog = new GLCMClusteringFrame();
@@ -88,7 +96,7 @@ public class GLCMClusteringOpSwing extends AbstractOp {
 			dialog.setUi(ui);
 			dialog.setDatasetService(datasetService);
 			dialog.setDisplay(display);
-
+			dialog.setImg(img);
 			/**
 			 * enables ROI (i.e. selection)
 			 */

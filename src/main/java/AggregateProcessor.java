@@ -1,5 +1,4 @@
-
-import ij.process.ImageProcessor;
+import net.imglib2.RandomAccessibleInterval;
 
 public class AggregateProcessor implements HaralickImageProcessor {
     private BasicPreprocessor bpRows, bpCols, bpMainDiag, bpAuxDiag;
@@ -11,11 +10,11 @@ public class AggregateProcessor implements HaralickImageProcessor {
         bpAuxDiag= new BasicPreprocessor(window, AuxiliarydiagonalTraverser.class);
     }
 
-    public AggregateProcessor( ImageProcessor ip ) {
-        bpRows= new BasicPreprocessor(ip, RowwiseTraverser.class);
-        bpCols= new BasicPreprocessor(ip, ColumnwiseTraverser.class);
-        bpMainDiag= new BasicPreprocessor(ip, MaindiagonalTraverser.class);
-        bpAuxDiag= new BasicPreprocessor(ip, AuxiliarydiagonalTraverser.class);
+    public AggregateProcessor( final RandomAccessibleInterval<Integer> img ) {
+        bpRows= new BasicPreprocessor(img, RowwiseTraverser.class);
+        bpCols= new BasicPreprocessor(img, ColumnwiseTraverser.class);
+        bpMainDiag= new BasicPreprocessor(img, MaindiagonalTraverser.class);
+        bpAuxDiag= new BasicPreprocessor(img, AuxiliarydiagonalTraverser.class);
     }
 
     @Override
