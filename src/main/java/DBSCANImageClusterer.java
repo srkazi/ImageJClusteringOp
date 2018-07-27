@@ -20,7 +20,7 @@ public class DBSCANImageClusterer {
         g= ip.getIntArray();
     }
 
-    public List<Cluster<AnnotatedPixelWrapper>> cluster( Collection<AnnotatedPixelWrapper> points ) {
+    public List<Cluster<AnnotatedPixelWrapper>> cluster() {
         return dbscanClusterer.cluster( Utils.annotateWithSlidingWindow(g,Utils.DEFAULT_WINDOW_SIZE) );
     }
 

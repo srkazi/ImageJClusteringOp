@@ -18,7 +18,7 @@ public class FuzzyKMeansImageClusterer {
         g= ip.getIntArray();
     }
 
-    public List<CentroidCluster<AnnotatedPixelWrapper>> cluster(Collection<AnnotatedPixelWrapper> points ) {
+    public List<CentroidCluster<AnnotatedPixelWrapper>> cluster() {
         return fuzzyKMeansClusterer.cluster( Utils.annotateWithSlidingWindow(g,Utils.DEFAULT_WINDOW_SIZE) );
     }
 }

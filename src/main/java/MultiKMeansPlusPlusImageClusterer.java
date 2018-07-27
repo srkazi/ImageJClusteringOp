@@ -13,12 +13,12 @@ public class MultiKMeansPlusPlusImageClusterer {
     private int [][]g;
 
     //FIXME: make NUM_TRIALS somehow flexible, e.g. getting this value from user interface
-    public MultiKMeansPlusPlusImageClusterer(final ImageProcessor ip, int k, double fuzziness, DistanceMeasure measure ) {
+    public MultiKMeansPlusPlusImageClusterer(final ImageProcessor ip, int k, DistanceMeasure measure ) {
         multiKMeansPlusPlusClusterer= new MultiKMeansPlusPlusClusterer<>(new KMeansPlusPlusClusterer<>(k),Utils.NUM_TRIALS);
         g= ip.getIntArray();
     }
 
-    public List<CentroidCluster<AnnotatedPixelWrapper>> cluster(Collection<AnnotatedPixelWrapper> points ) {
+    public List<CentroidCluster<AnnotatedPixelWrapper>> cluster() {
         return multiKMeansPlusPlusClusterer.cluster( Utils.annotateWithSlidingWindow(g,Utils.DEFAULT_WINDOW_SIZE) );
     }
 }

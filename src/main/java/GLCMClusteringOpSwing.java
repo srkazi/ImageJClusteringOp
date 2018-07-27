@@ -8,6 +8,11 @@
 
 import javax.swing.SwingUtilities;
 
+import ij.process.ImageProcessor;
+import net.imagej.Data;
+import net.imagej.DatasetService;
+import net.imagej.display.ImageDisplay;
+import net.imagej.display.OverlayService;
 import net.imagej.ops.AbstractOp;
 import net.imagej.ops.Op;
 import net.imagej.ops.OpService;
@@ -23,34 +28,45 @@ import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 import org.scijava.thread.ThreadService;
 import org.scijava.ui.UIService;
+import org.scijava.util.RealRect;
 
 @Plugin(type = Op.class,
 	menuPath = "Clustering > GLCM Clustering Swing")
 public class GLCMClusteringOpSwing extends AbstractOp {
 
-	@Parameter
-	OpService ops;
+    @Parameter
+	private DatasetService datasetService;
 
 	@Parameter
-	LogService log;
+	private ImageDisplay display;
 
 	@Parameter
-	UIService ui;
+	private OpService ops;
 
 	@Parameter
-	CommandService cmd;
+	private LogService log;
 
 	@Parameter
-	StatusService status;
+	private UIService ui;
 
 	@Parameter
-	ThreadService thread;
+	private CommandService cmd;
+
+	@Parameter
+	private OverlayService overlayService;
+
+	@Parameter
+	private StatusService status;
+
+	@Parameter
+	private ThreadService thread;
 
 	//private static GLCMClusteringDialog dialog = null;
+	//private static GLCMClusteringFrame dialog = null;
 	private static GLCMClusteringFrame dialog = null;
 
 	@Parameter(type = ItemIO.OUTPUT)
-	RandomAccessibleInterval<FloatType> deconvolved;
+	private RandomAccessibleInterval<FloatType> deconvolved;
 
 	/**
 	 * show a dialog and give the dialog access to required IJ2 Services
@@ -60,17 +76,26 @@ public class GLCMClusteringOpSwing extends AbstractOp {
 
 		SwingUtilities.invokeLater(() -> {
 			if (dialog == null) {
+				//dialog = new GLCMClusteringFrame();
 				dialog = new GLCMClusteringFrame();
 			}
 			dialog.setVisible(true);
-
 			dialog.setOps(ops);
 			dialog.setLog(log);
 			dialog.setStatus(status);
 			dialog.setCommand(cmd);
 			dialog.setThread(thread);
 			dialog.setUi(ui);
+			dialog.setDatasetService(datasetService);
+			dialog.setDisplay(display);
 
+			/**
+			 * enables ROI (i.e. selection)
+			 */
+			RealRect r= overlayService.getSelectionBounds(display);
+			log.info("image: "+display);
+			log.info("region: +" + r.x + " +" +  r.y
+					+ ", " +  r.width + " x " + r.height);
 		});
 	}
 }
