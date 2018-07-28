@@ -18,6 +18,7 @@ import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
 import net.imglib2.img.imageplus.ImagePlusImg;
 import net.imglib2.img.imageplus.ImagePlusImgs;
+import net.imglib2.type.numeric.integer.ByteType;
 import net.imglib2.type.numeric.integer.UnsignedByteType;
 import org.scijava.app.StatusService;
 import org.scijava.command.CommandService;
@@ -49,7 +50,7 @@ public class GLCMClusteringFrame extends JFrame {
 	private ImageDisplay display;
 	private OverlayService overlayService;
 	private DatasetService datasetService;
-	private RandomAccessibleInterval<UnsignedByteType> img;
+	private RandomAccessibleInterval<ByteType> img;
 
 	private final JPanel contentPanel= new JPanel();
 	private final JTabbedPane tabbedPane= new JTabbedPane();
@@ -240,30 +241,41 @@ public class GLCMClusteringFrame extends JFrame {
 
 	protected void makeMenuBar() {
 		bar= new JMenuBar();
-		JMenu menu= new JMenu("Distance Measures");
-		ButtonGroup group= new ButtonGroup();
 
-		JRadioButtonMenuItem item= new JRadioButtonMenuItem("Euclidean");
-		group.add(item);
-		menu.add(item);
+		//TODO: create resource bundle...
+		JMenu measuresMenu= new JMenu("Distance Measures");
+		ButtonGroup measuresGroup= new ButtonGroup();
+		//TODO: add a tooltip to each of these
+		String []distances= {"Euclidean","Chebyshev","Canberra","Manhattan","Earth Mover's"};
+		for ( String x: distances ) {
+			JRadioButtonMenuItem item = new JRadioButtonMenuItem(x);
+			measuresGroup.add(item);
+			measuresMenu.add(item);
+		}
+		bar.add(measuresMenu);
 
-		item= new JRadioButtonMenuItem("Chebyshev");
-		group.add(item);
-		menu.add(item);
+		JMenu windowSizeMenu= new JMenu("Window Size");
+		String []windowSizes= {"3x3","5x5","7x7","9x9","11x11"};
+		ButtonGroup windowSizesGroup= new ButtonGroup();
+		for ( String x: windowSizes ) {
+			JRadioButtonMenuItem item = new JRadioButtonMenuItem(x);
+			windowSizesGroup.add(item);
+			windowSizeMenu.add(item);
+		}
+		bar.add(windowSizeMenu);
 
-		item= new JRadioButtonMenuItem("Canberra");
-		group.add(item);
-		menu.add(item);
+		//FIXME: only one item is selected, probably need to read this:
+		// https://java-swing-tips.blogspot.com/2016/07/select-multiple-jcheckbox-in-jcombobox.html
+		JMenu adjacencyTypeMenu= new JMenu("Window Size");
+		String []adjacencies= {"Rows","Columns","Main diagonal","Aux diagonal"};
+		ButtonGroup adjacenciesGroup= new ButtonGroup();
+		for ( String x: adjacencies ) {
+			JCheckBox item = new JCheckBox(x);
+			adjacenciesGroup.add(item);
+			adjacencyTypeMenu.add(item);
+		}
+		bar.add(adjacencyTypeMenu);
 
-		item= new JRadioButtonMenuItem("Manhattan");
-		group.add(item);
-		menu.add(item);
-
-		item= new JRadioButtonMenuItem("Earth Mover's");
-		group.add(item);
-		menu.add(item);
-
-		bar.add(menu);
 		this.setJMenuBar(bar);
 	}
 
@@ -421,11 +433,11 @@ public class GLCMClusteringFrame extends JFrame {
 		this.datasetService = datasetService;
 	}
 
-	public RandomAccessibleInterval<UnsignedByteType> getImg() {
+	public RandomAccessibleInterval<ByteType> getImg() {
 		return img;
 	}
 
-	public void setImg(RandomAccessibleInterval<UnsignedByteType> img) {
+	public void setImg(RandomAccessibleInterval<ByteType> img) {
 		this.img = img;
 	}
 }

@@ -70,7 +70,7 @@ public class BasicPreprocessor implements HaralickImageProcessor {
                 // since the original matrix can be signed ints,
                 // we need to shift the entire thing by "mi"
                 // in order for everything to fit into [0..W-1]
-                g[i][j] = (int) ((((double) (g[i][j]-mi) / mx) * W));
+                g[i][j] = (int) ((((g[i][j]-mi+0.00) / mx) * W));
                 g[i][j]= Math.max(g[i][j],0);
                 g[i][j]= Math.min(g[i][j],W-1);
             }

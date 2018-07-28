@@ -34,17 +34,18 @@ public class Utils {
             throw new RuntimeException("the matrix of the image is empty"+e.getMessage(),e.getCause());
         }
         assert (slidingWindowSize & 1) == 1: String.format("Sliding window size must be odd, %d supplied",slidingWindowSize);
+        int sz= slidingWindowSize/2;
+        int [][]window= new int[slidingWindowSize][slidingWindowSize];
         for ( int i= 0; i < m; ++i )
             for ( int j= 0; j < n; ++j ) {
                 System.out.println(String.format("[%d,%d] sliding window for (%d,%d)",m,n,i,j));
-                int [][]window= new int[2*slidingWindowSize+1][2*slidingWindowSize+1];
-                for ( int x= 0, ni= i-slidingWindowSize; ni <= i+slidingWindowSize; ++ni, ++x )
-                    for ( int y= 0, nj= j-slidingWindowSize; nj <= j+slidingWindowSize; ++nj, ++y ) {
+                for ( int x= 0, ni= i-sz; ni <= i+sz; ++ni, ++x )
+                    for ( int y= 0, nj= j-sz; nj <= j+sz; ++nj, ++y ) {
                         assert x < window.length && y < window[0].length;
                         window[x][y] = 0 <= ni && ni < m && 0 <= nj && nj < n ? g[ni][nj] : 0;
                     }
                 AnnotatedPixelWrapper wrapper= new AnnotatedPixelWrapper(new Pair<>(i,j),calcFeatures(window));
-                //res.add(wrapper);
+                res.add(wrapper);
             }
         return res;
     }

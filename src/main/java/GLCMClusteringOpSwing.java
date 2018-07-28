@@ -21,6 +21,7 @@ import net.imagej.ops.AbstractOp;
 import net.imagej.ops.Op;
 import net.imagej.ops.OpService;
 import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.type.numeric.integer.ByteType;
 import net.imglib2.type.numeric.integer.UnsignedByteType;
 import net.imglib2.type.numeric.real.FloatType;
 
@@ -42,7 +43,7 @@ import org.scijava.util.RealRect;
 public class GLCMClusteringOpSwing implements Command {
 
 	@Parameter
-    private RandomAccessibleInterval<UnsignedByteType> img;
+    private RandomAccessibleInterval<ByteType> img;
 
     @Parameter
 	private DatasetService datasetService;
