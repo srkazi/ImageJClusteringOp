@@ -18,6 +18,7 @@ import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
 import net.imglib2.img.imageplus.ImagePlusImg;
 import net.imglib2.img.imageplus.ImagePlusImgs;
+import net.imglib2.type.numeric.integer.UnsignedByteType;
 import org.scijava.app.StatusService;
 import org.scijava.command.CommandService;
 import org.scijava.log.LogService;
@@ -48,7 +49,7 @@ public class GLCMClusteringFrame extends JFrame {
 	private ImageDisplay display;
 	private OverlayService overlayService;
 	private DatasetService datasetService;
-	private RandomAccessibleInterval<Integer> img;
+	private RandomAccessibleInterval<UnsignedByteType> img;
 
 	private final JPanel contentPanel= new JPanel();
 	private final JTabbedPane tabbedPane= new JTabbedPane();
@@ -177,7 +178,7 @@ public class GLCMClusteringFrame extends JFrame {
 		//imageProcessor= imagePlus.getProcessor();
 		MultiKMeansPlusPlusImageClusterer clusterer= new MultiKMeansPlusPlusImageClusterer(img,k,null);
 		log.info("[Launching Clustering]");
-		//clusterer.cluster();
+		clusterer.cluster();
 		log.info("[DONE Clustering]");
 	}
 
@@ -420,11 +421,11 @@ public class GLCMClusteringFrame extends JFrame {
 		this.datasetService = datasetService;
 	}
 
-	public RandomAccessibleInterval<Integer> getImg() {
+	public RandomAccessibleInterval<UnsignedByteType> getImg() {
 		return img;
 	}
 
-	public void setImg(RandomAccessibleInterval<Integer> img) {
+	public void setImg(RandomAccessibleInterval<UnsignedByteType> img) {
 		this.img = img;
 	}
 }

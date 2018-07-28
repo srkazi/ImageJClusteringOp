@@ -32,7 +32,10 @@ public class BasicPreprocessor implements HaralickImageProcessor {
 
     public <T extends MatrixTraverser>
     BasicPreprocessor( final int[][] window, Class<T> traverserImplClass ) {
-        g= window;
+        g= new int[window.length][window[0].length];
+        for ( int i= 0; i < g.length; ++i )
+            for ( int j= 0; j < g[0].length; ++j )
+                g[i][j]= window[i][j];
         traverser= TraverserFactory.buildTraverser(traverserImplClass,m= window.length,n= window[0].length);
         setUp();
     }
@@ -59,9 +62,15 @@ public class BasicPreprocessor implements HaralickImageProcessor {
         /**
          * normalisation step
          */
+        //FIXME:
+        if ( mx == 0 )
+            mx= 1;
         for ( int i= 0; i < m; ++i )
             for ( int j= 0; j < n; ++j ) {
-                g[i][j] = (int) ((((double) g[i][j]) / mx) * W);
+                // since the original matrix can be signed ints,
+                // we need to shift the entire thing by "mi"
+                // in order for everything to fit into [0..W-1]
+                g[i][j] = (int) ((((double) (g[i][j]-mi) / mx) * W));
                 g[i][j]= Math.max(g[i][j],0);
                 g[i][j]= Math.min(g[i][j],W-1);
             }
@@ -202,7 +211,6 @@ public class BasicPreprocessor implements HaralickImageProcessor {
             for ( j= 0; j < H; ++j )
                 if ( i != j )
                     s+= probabilities[i][j]*Math.pow(i-j,2);*/
-        System.out.printf("Contrast: %f\n",s);
         summary.put(TextureFeatures.CONTRAST,s);
         /**
          * 3. Correlation [cor]
@@ -222,6 +230,7 @@ public class BasicPreprocessor implements HaralickImageProcessor {
             for ( j= 0; j < H; ++j ) {
                 s+= Math.pow(i-statsPij.getMean(),2)*probabilities[i][j];
             }
+        summary.put(TextureFeatures.SUM_OF_SQUARES,s);
         /**
          * 5. Inverse Difference Moment [idm]
          */
@@ -280,11 +289,14 @@ public class BasicPreprocessor implements HaralickImageProcessor {
          * TODO: use JScience library
          * FIXME: we are only putting 0.00, for now
          */
-        summary.put(TextureFeatures.F13,0.00);
+        summary.put(TextureFeatures.MAXIMAL_CORRELATION_COEFFICIENT,0.00);
+
+        assert summary.size() == TextureFeatures.values().length;
     }
 
     @Override
     public double getValue( TextureFeatures feature ) {
+        assert summary.containsKey(feature);
         return summary.get(feature);
     }
 

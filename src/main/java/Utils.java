@@ -44,7 +44,7 @@ public class Utils {
                         window[x][y] = 0 <= ni && ni < m && 0 <= nj && nj < n ? g[ni][nj] : 0;
                     }
                 AnnotatedPixelWrapper wrapper= new AnnotatedPixelWrapper(new Pair<>(i,j),calcFeatures(window));
-                res.add(wrapper);
+                //res.add(wrapper);
             }
         return res;
     }
