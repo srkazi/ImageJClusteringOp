@@ -191,7 +191,7 @@ public class GLCMClusteringFrame extends JFrame {
 		log.info("[Launching Clustering]");
 		List<CentroidCluster<AnnotatedPixelWrapper>> list= clusterer.cluster();
 		ImgFactory<UnsignedByteType> imgFactory= new ArrayImgFactory<>();
-		Img<UnsignedByteType> img= imgFactory.create( new int[]{1024,1024,3}, new UnsignedByteType() );
+		Img<UnsignedByteType> img= imgFactory.create( new int[]{Utils.DEFAULT_SIZE,Utils.DEFAULT_SIZE,3}, new UnsignedByteType() );
 		RandomAccess<UnsignedByteType> r= img.randomAccess();
 		String []colors= {"00293C","1E656D","F1F3CE","F62A00"};
 		int currentColorIdx= 0;
@@ -215,6 +215,7 @@ public class GLCMClusteringFrame extends JFrame {
 			++currentColorIdx;
 		}
 		ImageJFunctions.show(img);
+		IJ.run("Stack to RGB", "");
 		log.info("[DONE Clustering]");
 	}
 

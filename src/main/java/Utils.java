@@ -10,6 +10,7 @@ public class Utils {
     public static final int DEFAULT_NUMBER_OF_CLUSTERS = 3;
     public static final int DEFAULT_ITERS = 13;
     public static final int DEFAULT_MIN_TS = 3;
+    public static final int DEFAULT_SIZE = 512;
 
     /*
     * This is useless code, already served by the implementation-classes themselves
@@ -48,7 +49,7 @@ public class Utils {
                     for ( int y= 0, nj= j-sz; nj <= j+sz; ++nj, ++y ) {
                         assert x < window.length && y < window[0].length;
                         //window[x][y] = 0 <= ni && ni < m && 0 <= nj && nj < n ? g[ni][nj] : 0;
-                        window[x][y] = 0 <= ni && ni < 1024 && 0 <= nj && nj < 1024 ? g[ni][nj] : 0;
+                        window[x][y] = 0 <= ni && ni < DEFAULT_SIZE && 0 <= nj && nj < DEFAULT_SIZE ? g[ni][nj] : 0;
                     }
                 AnnotatedPixelWrapper wrapper= new AnnotatedPixelWrapper(new Pair<>(i,j),calcFeatures(window));
                 res.add(wrapper);
