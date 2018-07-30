@@ -6,6 +6,11 @@ public class Utils {
     public static final String RESOURCES_DIRECTORY = "/home/sj/IdeaProjects/TextureAnalysisClustering/Resources/";
     public static final int DEFAULT_WINDOW_SIZE= 9;
     public static final int NUM_TRIALS= 9;
+    public static final double DEFAULT_FUZZINESS = 2.00;
+    public static final int DEFAULT_NUMBER_OF_CLUSTERS = 3;
+    public static final int DEFAULT_ITERS = 13;
+    public static final int DEFAULT_MIN_TS = 3;
+
     /*
     * This is useless code, already served by the implementation-classes themselves
     public static <T extends MatrixTraverser> boolean areAdjacent( Pair<Integer,Integer> a, Pair<Integer,Integer> b, Class<T> cl ) {
@@ -36,13 +41,14 @@ public class Utils {
         assert (slidingWindowSize & 1) == 1: String.format("Sliding window size must be odd, %d supplied",slidingWindowSize);
         int sz= slidingWindowSize/2;
         int [][]window= new int[slidingWindowSize][slidingWindowSize];
-        for ( int i= 0; i < m; ++i )
-            for ( int j= 0; j < n; ++j ) {
+        for ( int i= 0; i < 1024; ++i )
+            for ( int j= 0; j < 1024; ++j ) {
                 System.out.println(String.format("[%d,%d] sliding window for (%d,%d)",m,n,i,j));
                 for ( int x= 0, ni= i-sz; ni <= i+sz; ++ni, ++x )
                     for ( int y= 0, nj= j-sz; nj <= j+sz; ++nj, ++y ) {
                         assert x < window.length && y < window[0].length;
-                        window[x][y] = 0 <= ni && ni < m && 0 <= nj && nj < n ? g[ni][nj] : 0;
+                        //window[x][y] = 0 <= ni && ni < m && 0 <= nj && nj < n ? g[ni][nj] : 0;
+                        window[x][y] = 0 <= ni && ni < 1024 && 0 <= nj && nj < 1024 ? g[ni][nj] : 0;
                     }
                 AnnotatedPixelWrapper wrapper= new AnnotatedPixelWrapper(new Pair<>(i,j),calcFeatures(window));
                 res.add(wrapper);

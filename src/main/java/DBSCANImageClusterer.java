@@ -12,9 +12,9 @@ public class DBSCANImageClusterer extends ImageClusterer<ByteType> {
 
     //FIXME: make eps adjustable from the UI
     //FIXME: make minPts adjustable from the UI
-    public DBSCANImageClusterer(final RandomAccessibleInterval<ByteType> img, DistanceMeasure measure ) {
+    public DBSCANImageClusterer( final RandomAccessibleInterval<ByteType> img, double eps, int minPts, DistanceMeasure measure ) {
         super(img);
-        dbscanClusterer= new DBSCANClusterer<>(1e-9,3,measure==null?new EuclideanDistance():measure);
+        dbscanClusterer= new DBSCANClusterer<>(eps,minPts,measure==null?new EuclideanDistance():measure);
     }
 
     public List<Cluster<AnnotatedPixelWrapper>> cluster() {

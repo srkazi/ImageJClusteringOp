@@ -77,7 +77,7 @@ public class GLCMClusteringOpSwing implements Command {
 	private static GLCMClusteringFrame dialog = null;
 
 	@Parameter(type = ItemIO.OUTPUT)
-	private RandomAccessibleInterval<FloatType> deconvolved;
+	private RandomAccessibleInterval<FloatType> clusteredImage;
 
 	/**
 	 * show a dialog and give the dialog access to required IJ2 Services

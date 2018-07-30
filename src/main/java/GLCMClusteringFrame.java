@@ -14,12 +14,19 @@ import net.imagej.display.OverlayService;
 import net.imagej.ops.Op;
 import net.imagej.ops.OpService;
 import net.imagej.ops.Ops;
+import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
+import net.imglib2.img.ImgFactory;
+import net.imglib2.img.array.ArrayImgFactory;
+import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.img.imageplus.ImagePlusImg;
 import net.imglib2.img.imageplus.ImagePlusImgs;
 import net.imglib2.type.numeric.integer.ByteType;
 import net.imglib2.type.numeric.integer.UnsignedByteType;
+import org.apache.commons.math3.ml.clustering.CentroidCluster;
+import org.apache.commons.math3.ml.clustering.Cluster;
+import org.apache.log4j.helpers.UtilLoggingLevel;
 import org.scijava.app.StatusService;
 import org.scijava.command.CommandService;
 import org.scijava.log.LogService;
@@ -32,6 +39,7 @@ import javax.swing.plaf.basic.BasicSplitPaneUI;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.AnnotatedArrayType;
 import java.util.List;
 import java.util.Map;
 
@@ -79,7 +87,7 @@ public class GLCMClusteringFrame extends JFrame {
 	    JPanel panel= new JPanel();
 		panel.setLayout(new GridBagLayout());
 
-		JLabel label= new JLabel("#of clusters");
+		JLabel label= new JLabel("#of clusters",SwingConstants.RIGHT);
 		GridBagConstraints c= new GridBagConstraints();
 		c.gridx= 0;
 		c.gridy= 0;
@@ -99,7 +107,7 @@ public class GLCMClusteringFrame extends JFrame {
 		c.weightx= 0.7;
 		panel.add(formattedTextField,c);
 
-		JLabel label2= new JLabel("maximum #of iterations");
+		JLabel label2= new JLabel("maximum #of iterations",SwingConstants.RIGHT);
 		c= new GridBagConstraints();
 		c.gridx= 0;
 		c.gridy= 1;
@@ -119,7 +127,7 @@ public class GLCMClusteringFrame extends JFrame {
 		c.weightx= 0.7;
 		panel.add(formattedTextField2,c);
 
-		JLabel label3= new JLabel("#of trials");
+		JLabel label3= new JLabel("#of trials",SwingConstants.RIGHT);
 		c= new GridBagConstraints();
 		c.gridx= 0;
 		c.gridy= 2;
@@ -181,7 +189,32 @@ public class GLCMClusteringFrame extends JFrame {
 		//imageProcessor= imagePlus.getProcessor();
 		MultiKMeansPlusPlusImageClusterer clusterer= new MultiKMeansPlusPlusImageClusterer(img,k,null);
 		log.info("[Launching Clustering]");
-		clusterer.cluster();
+		List<CentroidCluster<AnnotatedPixelWrapper>> list= clusterer.cluster();
+		ImgFactory<UnsignedByteType> imgFactory= new ArrayImgFactory<>();
+		Img<UnsignedByteType> img= imgFactory.create( new int[]{1024,1024,3}, new UnsignedByteType() );
+		RandomAccess<UnsignedByteType> r= img.randomAccess();
+		String []colors= {"00293C","1E656D","F1F3CE","F62A00"};
+		int currentColorIdx= 0;
+		int []p= new int[3];
+		for ( CentroidCluster<AnnotatedPixelWrapper> cl: list ) {
+			List<AnnotatedPixelWrapper> points= cl.getPoints();
+			int redChannel= Integer.parseInt(colors[currentColorIdx].substring(0,2),16);
+			int greenChannel= Integer.parseInt(colors[currentColorIdx].substring(2,4),16);
+			int blueChannel= Integer.parseInt(colors[currentColorIdx].substring(4,6),16);
+			for ( AnnotatedPixelWrapper apw: points ) {
+				Pair<Integer,Integer> location= apw.getLocation();
+				int i= location.getX(), j= location.getY();
+				p[0]= i; p[1]= j;
+				p[2]= 0; r.setPosition(p);
+				r.get().set(redChannel);
+				p[2]= 1; r.setPosition(p);
+				r.get().set(greenChannel);
+				p[2]= 2; r.setPosition(p);
+				r.get().set(blueChannel);
+			}
+			++currentColorIdx;
+		}
+		ImageJFunctions.show(img);
 		log.info("[DONE Clustering]");
 	}
 
@@ -189,7 +222,7 @@ public class GLCMClusteringFrame extends JFrame {
 		JPanel panel= new JPanel();
 		panel.setLayout(new GridBagLayout());
 
-		JLabel label= new JLabel("epsilon");
+		JLabel label= new JLabel("eps");
 		GridBagConstraints c= new GridBagConstraints();
 		c.gridx= 0;
 		c.gridy= 0;
@@ -209,7 +242,7 @@ public class GLCMClusteringFrame extends JFrame {
 		c.weightx= 0.7;
 		panel.add(formattedTextField,c);
 
-		JLabel label2= new JLabel("minimum #of points");
+		JLabel label2= new JLabel("min. #of points",SwingConstants.RIGHT);
 		c= new GridBagConstraints();
 		c.gridx= 0;
 		c.gridy= 1;
@@ -233,7 +266,6 @@ public class GLCMClusteringFrame extends JFrame {
 		clusterIt.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//MultiKMeansPlusPlusImageClusterer clusterer= new MultiKMeansPlusPlusImageClusterer()
 				thread.run( ()-> {
 					int minPts= 3;
 					double eps;
@@ -241,7 +273,9 @@ public class GLCMClusteringFrame extends JFrame {
 						minPts= Integer.parseInt(formattedTextField2.getText());
 						eps= Double.parseDouble(formattedTextField.getText());
 					} catch ( NumberFormatException nfe ) {
-						throw nfe;
+						//throw nfe;
+						eps= 1e-3;
+						minPts= Utils.DEFAULT_MIN_TS;
 					}
 					log.info("Read minPts= "+minPts);
 					dbscanClustering(minPts,eps);
@@ -264,7 +298,8 @@ public class GLCMClusteringFrame extends JFrame {
 
 	//TODO
 	private void dbscanClustering( int minPts, double eps ) {
-		//TODO
+		DBSCANImageClusterer clusterer= new DBSCANImageClusterer(img,eps,minPts,null);
+		List<Cluster<AnnotatedPixelWrapper>> list= clusterer.cluster();
 	}
 
 	protected JComponent makeTextPanel( String text ) {
@@ -329,7 +364,7 @@ public class GLCMClusteringFrame extends JFrame {
 			constraints.weightx= 0.5;
 		}
 		*/
-		JLabel label1= new JLabel("#of clusters");
+		JLabel label1= new JLabel("#of clusters",SwingConstants.RIGHT);
 		constraints= new GridBagConstraints();
 		constraints.gridx= 0;
 		constraints.gridy= 0;
@@ -349,7 +384,7 @@ public class GLCMClusteringFrame extends JFrame {
 		constraints.weightx= 0.7;
 		panel.add(numberOfClusters,constraints);
 
-		JLabel label2= new JLabel("Fuzziness");
+		JLabel label2= new JLabel("Fuzziness",SwingConstants.RIGHT);
 		constraints= new GridBagConstraints();
 		constraints.gridx= 0;
 		constraints.gridy= 1;
@@ -369,7 +404,7 @@ public class GLCMClusteringFrame extends JFrame {
 		constraints.weightx= 0.7;
 		panel.add(textField,constraints);
 
-		JLabel label3= new JLabel("#of iterations");
+		JLabel label3= new JLabel("#of iterations",SwingConstants.RIGHT);
 		constraints= new GridBagConstraints();
 		constraints.gridx= 0;
 		constraints.gridy= 2;
@@ -401,7 +436,10 @@ public class GLCMClusteringFrame extends JFrame {
 						iterations= Integer.parseInt(textField2.getText());
 						fuzziness= Double.parseDouble(textField.getText());
 					} catch ( NumberFormatException nfe ) {
-						throw nfe;
+						//throw nfe;
+						fuzziness= Utils.DEFAULT_FUZZINESS;
+						k= Utils.DEFAULT_NUMBER_OF_CLUSTERS;
+						iterations= Utils.DEFAULT_ITERS;
 					}
 					fuzzyKMeansClustering(k,fuzziness,iterations);
 				});
@@ -422,7 +460,10 @@ public class GLCMClusteringFrame extends JFrame {
 
 	//TODO
 	private void fuzzyKMeansClustering( int k, double fuzziness, int numIterations ) {
-		//TODO
+		FuzzyKMeansImageClusterer clusterer= new FuzzyKMeansImageClusterer(img,k,fuzziness,null);
+		log.info("[Launching FuzzyKMeans Clustering]");
+		List<CentroidCluster<AnnotatedPixelWrapper>> list= clusterer.cluster();
+		log.info("[DONE FuzzyKMeans Clustering]");
 	}
 
 	public static void main(final String[] args) {
