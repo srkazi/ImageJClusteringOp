@@ -179,24 +179,36 @@ public class GLCMClusteringFrame extends JFrame {
 	public void multiKMeansPPClustering( int k ) {
 	    /*
 		RealRect r= overlayService.getSelectionBounds(display);
-		List<Dataset> list= datasetService.getDatasets();
-		Dataset dataset= list.get(0);
-		Img img= dataset.getImgPlus().getImg();
 		*/
-		//ImageProcessor ip= new ByteProcessor(img);
-		//Map<String,Object> map= imgPlus.getProperties();
-		//ImagePlus imagePlus= IJ.getImage();
-		//imageProcessor= imagePlus.getProcessor();
 		MultiKMeansPlusPlusImageClusterer clusterer= new MultiKMeansPlusPlusImageClusterer(img,k,null);
 		log.info("[Launching Clustering]");
 		List<CentroidCluster<AnnotatedPixelWrapper>> list= clusterer.cluster();
-		ImgFactory<UnsignedByteType> imgFactory= new ArrayImgFactory<>();
+		drawResult(list);
+		//IJ.run("Stack to Images","");
+		//IJ.run("Merge Channels...","");
+		log.info("[DONE Clustering]");
+	}
+	private void dbscanClustering( int minPts, double eps ) {
+		DBSCANImageClusterer clusterer= new DBSCANImageClusterer(img,eps,minPts,null);
+		List<Cluster<AnnotatedPixelWrapper>> list= clusterer.cluster();
+		drawResult(list);
+	}
+	private void fuzzyKMeansClustering( int k, double fuzziness, int numIterations ) {
+		FuzzyKMeansImageClusterer clusterer= new FuzzyKMeansImageClusterer(img,k,fuzziness,null);
+		log.info("[Launching FuzzyKMeans Clustering]");
+		List<CentroidCluster<AnnotatedPixelWrapper>> list= clusterer.cluster();
+		log.info("[DONE FuzzyKMeans Clustering]");
+		drawResult(list);
+	}
+
+	private void drawResult( List<? extends Cluster<AnnotatedPixelWrapper>> list ) {
+    	ImgFactory<UnsignedByteType> imgFactory= new ArrayImgFactory<>();
 		Img<UnsignedByteType> img= imgFactory.create( new int[]{Utils.DEFAULT_SIZE,Utils.DEFAULT_SIZE,3}, new UnsignedByteType() );
 		RandomAccess<UnsignedByteType> r= img.randomAccess();
 		String []colors= {"00293C","1E656D","F1F3CE","F62A00"};
 		int currentColorIdx= 0;
 		int []p= new int[3];
-		for ( CentroidCluster<AnnotatedPixelWrapper> cl: list ) {
+		for ( Cluster<AnnotatedPixelWrapper> cl: list ) {
 			List<AnnotatedPixelWrapper> points= cl.getPoints();
 			int redChannel= Integer.parseInt(colors[currentColorIdx].substring(0,2),16);
 			int greenChannel= Integer.parseInt(colors[currentColorIdx].substring(2,4),16);
@@ -216,7 +228,6 @@ public class GLCMClusteringFrame extends JFrame {
 		}
 		ImageJFunctions.show(img);
 		IJ.run("Stack to RGB", "");
-		log.info("[DONE Clustering]");
 	}
 
 	private JComponent makeDBSCANTab( String dbscan ) {
@@ -230,6 +241,8 @@ public class GLCMClusteringFrame extends JFrame {
 		c.gridwidth= 1;
 		c.gridheight= 1;
 		c.weightx= 0.3;
+		label.setHorizontalAlignment(SwingConstants.RIGHT);
+		label.setHorizontalTextPosition(SwingConstants.RIGHT);
 		panel.add(label,c);
 
 		JFormattedTextField formattedTextField= new JFormattedTextField();
@@ -250,9 +263,22 @@ public class GLCMClusteringFrame extends JFrame {
 		c.gridwidth= 1;
 		c.gridheight= 1;
 		c.weightx= 0.3;
+		label2.setHorizontalAlignment(SwingConstants.RIGHT);
+		label2.setHorizontalTextPosition(SwingConstants.RIGHT);
 		panel.add(label2,c);
 
 		JFormattedTextField formattedTextField2= new JFormattedTextField();
+		formattedTextField2.setInputVerifier(new InputVerifier() {
+			@Override
+			public boolean verify( JComponent input ) {
+				try {
+					int k= Integer.parseInt( ((JFormattedTextField)input).getText() );
+					return 1 <= k;
+				} catch ( Exception e ) {
+					return false ;
+				}
+			}
+		});
 		c= new GridBagConstraints();
 		c.gridx= 1;
 		c.gridy= 1;
@@ -295,21 +321,6 @@ public class GLCMClusteringFrame extends JFrame {
 
 		return panel;
 
-	}
-
-	//TODO
-	private void dbscanClustering( int minPts, double eps ) {
-		DBSCANImageClusterer clusterer= new DBSCANImageClusterer(img,eps,minPts,null);
-		List<Cluster<AnnotatedPixelWrapper>> list= clusterer.cluster();
-	}
-
-	protected JComponent makeTextPanel( String text ) {
-		JPanel panel = new JPanel(false);
-		JLabel filler = new JLabel(text);
-		filler.setHorizontalAlignment(JLabel.CENTER);
-		panel.setLayout(new GridLayout(1, 1));
-		panel.add(filler);
-		return panel;
 	}
 
 	protected void makeMenuBar() {
@@ -357,14 +368,6 @@ public class GLCMClusteringFrame extends JFrame {
 		JPanel panel= new JPanel(false);
 		panel.setLayout(new GridBagLayout());
 		GridBagConstraints constraints;
-		/*
-		if ( shouldFill ) {
-			constraints.fill= GridBagConstraints.HORIZONTAL;
-		}
-		if ( shouldWeightX ) {
-			constraints.weightx= 0.5;
-		}
-		*/
 		JLabel label1= new JLabel("#of clusters",SwingConstants.RIGHT);
 		constraints= new GridBagConstraints();
 		constraints.gridx= 0;
@@ -395,6 +398,17 @@ public class GLCMClusteringFrame extends JFrame {
 		panel.add(label2,constraints);
 
 		JFormattedTextField textField= new JFormattedTextField();
+		textField.setInputVerifier(new InputVerifier() {
+			@Override
+			public boolean verify(JComponent input) {
+			    try {
+			    	double eps= Double.parseDouble( ((JFormattedTextField)input).getText() );
+			    	return  eps > 1.00;
+				} catch ( Exception e ) {
+			    	return false ;
+				}
+			}
+		});
 		constraints= new GridBagConstraints();
 		constraints.gridx= 1;
 		constraints.gridy= 1;
@@ -457,14 +471,6 @@ public class GLCMClusteringFrame extends JFrame {
 		panel.add(clusterIt,c);
 
 		return panel;
-	}
-
-	//TODO
-	private void fuzzyKMeansClustering( int k, double fuzziness, int numIterations ) {
-		FuzzyKMeansImageClusterer clusterer= new FuzzyKMeansImageClusterer(img,k,fuzziness,null);
-		log.info("[Launching FuzzyKMeans Clustering]");
-		List<CentroidCluster<AnnotatedPixelWrapper>> list= clusterer.cluster();
-		log.info("[DONE FuzzyKMeans Clustering]");
 	}
 
 	public static void main(final String[] args) {
