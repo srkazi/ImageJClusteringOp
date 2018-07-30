@@ -24,7 +24,7 @@ public class Utils {
         return false ;
     }
     */
-    public static List<AnnotatedPixelWrapper> annotateWithSlidingWindow(int [][]g, int slidingWindowSize ) {
+    public static List<AnnotatedPixelWrapper> annotateWithSlidingWindow( int [][]g, int slidingWindowSize ) {
         int m,n;
         List<AnnotatedPixelWrapper> res= new ArrayList<>();
         try {

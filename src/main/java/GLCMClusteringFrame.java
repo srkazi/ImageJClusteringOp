@@ -66,8 +66,11 @@ public class GLCMClusteringFrame extends JFrame {
 		JComponent panelForMultiKMeansPP= makeMultiKMeansTab();
 		tabbedPane.addTab("Multi-K-Means++",panelForMultiKMeansPP);
 
+		tabbedPane.setPreferredSize(new Dimension(350,200));
+
 		add(tabbedPane);
 		tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+		this.pack();
 
 		makeMenuBar();
 	}
@@ -140,7 +143,6 @@ public class GLCMClusteringFrame extends JFrame {
 		clusterIt.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//MultiKMeansPlusPlusImageClusterer clusterer= new MultiKMeansPlusPlusImageClusterer()
 				thread.run( ()-> {
 					int k= 3;
 					try {
@@ -207,7 +209,7 @@ public class GLCMClusteringFrame extends JFrame {
 		c.weightx= 0.7;
 		panel.add(formattedTextField,c);
 
-		JLabel label2= new JLabel("minimum # of points");
+		JLabel label2= new JLabel("minimum #of points");
 		c= new GridBagConstraints();
 		c.gridx= 0;
 		c.gridy= 1;
@@ -227,7 +229,42 @@ public class GLCMClusteringFrame extends JFrame {
 		c.weightx= 0.7;
 		panel.add(formattedTextField2,c);
 
+		final JButton clusterIt= new JButton("Cluster");
+		clusterIt.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				//MultiKMeansPlusPlusImageClusterer clusterer= new MultiKMeansPlusPlusImageClusterer()
+				thread.run( ()-> {
+					int minPts= 3;
+					double eps;
+					try {
+						minPts= Integer.parseInt(formattedTextField2.getText());
+						eps= Double.parseDouble(formattedTextField.getText());
+					} catch ( NumberFormatException nfe ) {
+						throw nfe;
+					}
+					log.info("Read minPts= "+minPts);
+					dbscanClustering(minPts,eps);
+				});
+			}
+		});
+		c= new GridBagConstraints();
+		c.gridx= 0;
+		c.gridy= 2;
+		c.gridwidth= 1;
+		c.gridheight= 1;
+		c.fill= GridBagConstraints.HORIZONTAL;
+		c.anchor= GridBagConstraints.CENTER;
+		c.weightx= 0.7;
+		panel.add(clusterIt,c);
+
 		return panel;
+
+	}
+
+	//TODO
+	private void dbscanClustering( int minPts, double eps ) {
+		//TODO
 	}
 
 	protected JComponent makeTextPanel( String text ) {
@@ -266,7 +303,8 @@ public class GLCMClusteringFrame extends JFrame {
 
 		//FIXME: only one item is selected, probably need to read this:
 		// https://java-swing-tips.blogspot.com/2016/07/select-multiple-jcheckbox-in-jcombobox.html
-		JMenu adjacencyTypeMenu= new JMenu("Window Size");
+        // https://stackoverflow.com/questions/19766/how-do-i-make-a-list-with-checkboxes-in-java-swing
+		JMenu adjacencyTypeMenu= new JMenu("Adjacency");
 		String []adjacencies= {"Rows","Columns","Main diagonal","Aux diagonal"};
 		ButtonGroup adjacenciesGroup= new ButtonGroup();
 		for ( String x: adjacencies ) {
@@ -291,7 +329,7 @@ public class GLCMClusteringFrame extends JFrame {
 			constraints.weightx= 0.5;
 		}
 		*/
-		JLabel label1= new JLabel("Number of clusters");
+		JLabel label1= new JLabel("#of clusters");
 		constraints= new GridBagConstraints();
 		constraints.gridx= 0;
 		constraints.gridy= 0;
@@ -300,7 +338,7 @@ public class GLCMClusteringFrame extends JFrame {
 		constraints.weightx= 0.3;
 		panel.add(label1,constraints);
 
-		JSlider numberOfClusters= new JSlider(2,127);
+		JFormattedTextField numberOfClusters= new JFormattedTextField();
 		constraints= new GridBagConstraints();
 		constraints.gridx= 1;
 		constraints.gridy= 0;
@@ -331,7 +369,7 @@ public class GLCMClusteringFrame extends JFrame {
 		constraints.weightx= 0.7;
 		panel.add(textField,constraints);
 
-		JLabel label3= new JLabel("Number of iterations");
+		JLabel label3= new JLabel("#of iterations");
 		constraints= new GridBagConstraints();
 		constraints.gridx= 0;
 		constraints.gridy= 2;
@@ -351,7 +389,40 @@ public class GLCMClusteringFrame extends JFrame {
 		constraints.weightx= 0.7;
 		panel.add(textField2,constraints);
 
+		final JButton clusterIt= new JButton("Cluster");
+		clusterIt.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				thread.run( ()-> {
+					int k= 3, iterations;
+					double fuzziness;
+					try {
+						k= Integer.parseInt(numberOfClusters.getText());
+						iterations= Integer.parseInt(textField2.getText());
+						fuzziness= Double.parseDouble(textField.getText());
+					} catch ( NumberFormatException nfe ) {
+						throw nfe;
+					}
+					fuzzyKMeansClustering(k,fuzziness,iterations);
+				});
+			}
+		});
+		GridBagConstraints c= new GridBagConstraints();
+		c.gridx= 0;
+		c.gridy= 3;
+		c.gridwidth= 1;
+		c.gridheight= 1;
+		c.fill= GridBagConstraints.HORIZONTAL;
+		c.anchor= GridBagConstraints.CENTER;
+		c.weightx= 0.7;
+		panel.add(clusterIt,c);
+
 		return panel;
+	}
+
+	//TODO
+	private void fuzzyKMeansClustering( int k, double fuzziness, int numIterations ) {
+		//TODO
 	}
 
 	public static void main(final String[] args) {
