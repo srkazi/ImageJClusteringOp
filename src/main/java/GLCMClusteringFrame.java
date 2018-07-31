@@ -2,6 +2,7 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.WindowManager;
 import ij.io.Opener;
+import ij.plugin.Duplicator;
 import ij.plugin.Grid;
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
@@ -19,6 +20,7 @@ import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
 import net.imglib2.img.ImgFactory;
 import net.imglib2.img.array.ArrayImgFactory;
+import net.imglib2.img.array.ArrayImgs;
 import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.img.imageplus.ImagePlusImg;
 import net.imglib2.img.imageplus.ImagePlusImgs;
@@ -233,7 +235,8 @@ public class GLCMClusteringFrame extends JFrame {
 
 	private void drawResult( List<? extends Cluster<AnnotatedPixelWrapper>> list ) {
     	ImgFactory<UnsignedByteType> imgFactory= new ArrayImgFactory<>();
-		Img<UnsignedByteType> img= imgFactory.create( new int[]{Utils.DEFAULT_SIZE,Utils.DEFAULT_SIZE,3}, new UnsignedByteType() );
+		//Img<UnsignedByteType> img= imgFactory.create( new int[]{Utils.DEFAULT_SIZE,Utils.DEFAULT_SIZE,3}, new UnsignedByteType() );
+		Img<UnsignedByteType> img= ArrayImgs.unsignedBytes(Utils.DEFAULT_SIZE, Utils.DEFAULT_SIZE, 3);
 		RandomAccess<UnsignedByteType> r= img.randomAccess();
 		String []colors= {"00293C","1E656D","F1F3CE","F62A00"};
 		int currentColorIdx= 0;
@@ -256,7 +259,10 @@ public class GLCMClusteringFrame extends JFrame {
 			}
 			++currentColorIdx;
 		}
-		ImageJFunctions.show(img);
+		//ImageJFunctions.show(img);
+        ImagePlus imp= ImageJFunctions.wrap(img,"result");
+		imp= new Duplicator().run(imp);
+		imp.show();
 		IJ.run("Stack to RGB", "");
 	}
 
