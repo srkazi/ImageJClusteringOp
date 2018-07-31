@@ -35,6 +35,7 @@ import org.scijava.ui.UIService;
 import org.scijava.util.RealRect;
 
 import javax.swing.*;
+import javax.swing.border.EtchedBorder;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -66,7 +67,21 @@ public class GLCMClusteringFrame extends JFrame {
 
 	public GLCMClusteringFrame() {
 		setBounds(100,100,300,300);
+		this.setTitle("Clustering");
 
+		/*
+		try {
+			UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (UnsupportedLookAndFeelException e) {
+			e.printStackTrace();
+		}
+		*/
 		JComponent panelForFuzzyKMeans= makeFuzzyKMeansTab();
 		tabbedPane.addTab("Fuzzy K-Means",panelForFuzzyKMeans);
 		JComponent panelForDBSCAN= makeDBSCANTab("DBSCAN");
@@ -86,27 +101,33 @@ public class GLCMClusteringFrame extends JFrame {
 	private JComponent makeMultiKMeansTab() {
 	    JPanel panel= new JPanel();
 		panel.setLayout(new GridBagLayout());
-
-		JLabel label= new JLabel("#of clusters",SwingConstants.RIGHT);
 		GridBagConstraints c= new GridBagConstraints();
+		/*
+		JLabel label= new JLabel("#of clusters",SwingConstants.RIGHT);
+		c= new GridBagConstraints();
 		c.gridx= 0;
 		c.gridy= 0;
 		c.gridwidth= 1;
 		c.gridheight= 1;
 		c.weightx= 0.3;
 		panel.add(label,c);
+		*/
 
 		JFormattedTextField formattedTextField= new JFormattedTextField();
 		c= new GridBagConstraints();
-		c.gridx= 1;
+		c.gridx= 0;
 		c.gridy= 0;
 		c.gridwidth= 4;
 		c.gridheight= 1;
 		c.fill= GridBagConstraints.HORIZONTAL;
 		c.anchor= GridBagConstraints.LINE_END;
 		c.weightx= 0.7;
+		formattedTextField.setBorder( BorderFactory.createTitledBorder(
+				BorderFactory.createEtchedBorder(EtchedBorder.RAISED, Color.GRAY,Color.DARK_GRAY), "#of clusters"
+		));
 		panel.add(formattedTextField,c);
 
+		/*
 		JLabel label2= new JLabel("maximum #of iterations",SwingConstants.RIGHT);
 		c= new GridBagConstraints();
 		c.gridx= 0;
@@ -115,18 +136,23 @@ public class GLCMClusteringFrame extends JFrame {
 		c.gridheight= 1;
 		c.weightx= 0.3;
 		panel.add(label2,c);
+		*/
 
 		JFormattedTextField formattedTextField2= new JFormattedTextField();
 		c= new GridBagConstraints();
-		c.gridx= 1;
+		c.gridx= 0;
 		c.gridy= 1;
 		c.gridwidth= 4;
 		c.gridheight= 1;
 		c.fill= GridBagConstraints.HORIZONTAL;
 		c.anchor= GridBagConstraints.LINE_END;
 		c.weightx= 0.7;
+		formattedTextField2.setBorder( BorderFactory.createTitledBorder(
+			BorderFactory.createEtchedBorder(EtchedBorder.RAISED, Color.GRAY,Color.DARK_GRAY), "max #of iterations"
+		));
 		panel.add(formattedTextField2,c);
 
+		/*
 		JLabel label3= new JLabel("#of trials",SwingConstants.RIGHT);
 		c= new GridBagConstraints();
 		c.gridx= 0;
@@ -135,16 +161,20 @@ public class GLCMClusteringFrame extends JFrame {
 		c.gridheight= 1;
 		c.weightx= 0.3;
 		panel.add(label3,c);
+		*/
 
 		JFormattedTextField formattedTextField3= new JFormattedTextField();
 		c= new GridBagConstraints();
-		c.gridx= 1;
+		c.gridx= 0;
 		c.gridy= 2;
 		c.gridwidth= 4;
 		c.gridheight= 1;
 		c.fill= GridBagConstraints.HORIZONTAL;
 		c.anchor= GridBagConstraints.LINE_END;
 		c.weightx= 0.7;
+		formattedTextField3.setBorder( BorderFactory.createTitledBorder(
+			BorderFactory.createEtchedBorder(EtchedBorder.RAISED, Color.GRAY,Color.DARK_GRAY), "#of trials"
+		));
 		panel.add(formattedTextField3,c);
 
 		final JButton clusterIt= new JButton("Cluster");
@@ -233,9 +263,11 @@ public class GLCMClusteringFrame extends JFrame {
 	private JComponent makeDBSCANTab( String dbscan ) {
 		JPanel panel= new JPanel();
 		panel.setLayout(new GridBagLayout());
-
-		JLabel label= new JLabel("eps");
 		GridBagConstraints c= new GridBagConstraints();
+
+		/*
+		JLabel label= new JLabel("eps");
+		c= new GridBagConstraints();
 		c.gridx= 0;
 		c.gridy= 0;
 		c.gridwidth= 1;
@@ -244,18 +276,23 @@ public class GLCMClusteringFrame extends JFrame {
 		label.setHorizontalAlignment(SwingConstants.RIGHT);
 		label.setHorizontalTextPosition(SwingConstants.RIGHT);
 		panel.add(label,c);
+		*/
 
 		JFormattedTextField formattedTextField= new JFormattedTextField();
 		c= new GridBagConstraints();
-		c.gridx= 1;
+		c.gridx= 0;
 		c.gridy= 0;
 		c.gridwidth= 4;
 		c.gridheight= 1;
 		c.fill= GridBagConstraints.HORIZONTAL;
 		c.anchor= GridBagConstraints.SOUTH;
 		c.weightx= 0.7;
+		formattedTextField.setBorder( BorderFactory.createTitledBorder(
+			BorderFactory.createEtchedBorder(EtchedBorder.RAISED, Color.GRAY,Color.DARK_GRAY), "eps"
+		));
 		panel.add(formattedTextField,c);
 
+		/*
 		JLabel label2= new JLabel("min. #of points",SwingConstants.RIGHT);
 		c= new GridBagConstraints();
 		c.gridx= 0;
@@ -266,6 +303,7 @@ public class GLCMClusteringFrame extends JFrame {
 		label2.setHorizontalAlignment(SwingConstants.RIGHT);
 		label2.setHorizontalTextPosition(SwingConstants.RIGHT);
 		panel.add(label2,c);
+		*/
 
 		JFormattedTextField formattedTextField2= new JFormattedTextField();
 		formattedTextField2.setInputVerifier(new InputVerifier() {
@@ -280,13 +318,16 @@ public class GLCMClusteringFrame extends JFrame {
 			}
 		});
 		c= new GridBagConstraints();
-		c.gridx= 1;
+		c.gridx= 0;
 		c.gridy= 1;
 		c.gridwidth= 4;
 		c.gridheight= 1;
 		c.fill= GridBagConstraints.HORIZONTAL;
 		c.anchor= GridBagConstraints.LINE_END;
 		c.weightx= 0.7;
+		formattedTextField2.setBorder( BorderFactory.createTitledBorder(
+			BorderFactory.createEtchedBorder(EtchedBorder.RAISED, Color.GRAY,Color.DARK_GRAY), "min #of points"
+		));
 		panel.add(formattedTextField2,c);
 
 		final JButton clusterIt= new JButton("Cluster");
@@ -368,6 +409,7 @@ public class GLCMClusteringFrame extends JFrame {
 		JPanel panel= new JPanel(false);
 		panel.setLayout(new GridBagLayout());
 		GridBagConstraints constraints;
+		/*
 		JLabel label1= new JLabel("#of clusters",SwingConstants.RIGHT);
 		constraints= new GridBagConstraints();
 		constraints.gridx= 0;
@@ -376,19 +418,24 @@ public class GLCMClusteringFrame extends JFrame {
 		constraints.gridheight= 1;
 		constraints.weightx= 0.3;
 		panel.add(label1,constraints);
+		*/
 
 		JFormattedTextField numberOfClusters= new JFormattedTextField();
 		constraints= new GridBagConstraints();
-		constraints.gridx= 1;
+		constraints.gridx= 0;
 		constraints.gridy= 0;
 		constraints.gridwidth= 4;
 		constraints.gridheight= 1;
 		constraints.fill= GridBagConstraints.HORIZONTAL;
 		constraints.anchor= GridBagConstraints.LINE_END;
 		constraints.weightx= 0.7;
+		numberOfClusters.setBorder( BorderFactory.createTitledBorder(
+				BorderFactory.createEtchedBorder(EtchedBorder.RAISED, Color.GRAY,Color.DARK_GRAY), "#of clusters"
+		));
 		panel.add(numberOfClusters,constraints);
 
-		JLabel label2= new JLabel("Fuzziness",SwingConstants.RIGHT);
+		/*
+		JLabel label2= new JLabel("fuzziness",SwingConstants.RIGHT);
 		constraints= new GridBagConstraints();
 		constraints.gridx= 0;
 		constraints.gridy= 1;
@@ -396,6 +443,7 @@ public class GLCMClusteringFrame extends JFrame {
 		constraints.gridheight= 1;
 		constraints.weightx= 0.3;
 		panel.add(label2,constraints);
+		*/
 
 		JFormattedTextField textField= new JFormattedTextField();
 		textField.setInputVerifier(new InputVerifier() {
@@ -410,15 +458,19 @@ public class GLCMClusteringFrame extends JFrame {
 			}
 		});
 		constraints= new GridBagConstraints();
-		constraints.gridx= 1;
+		constraints.gridx= 0;
 		constraints.gridy= 1;
 		constraints.gridwidth= 4;
 		constraints.gridheight= 1;
 		constraints.fill= GridBagConstraints.HORIZONTAL;
 		constraints.anchor= GridBagConstraints.LINE_END;
 		constraints.weightx= 0.7;
+		textField.setBorder( BorderFactory.createTitledBorder(
+				BorderFactory.createEtchedBorder(EtchedBorder.RAISED, Color.GRAY,Color.DARK_GRAY), "fuzziness"
+		));
 		panel.add(textField,constraints);
 
+		/*
 		JLabel label3= new JLabel("#of iterations",SwingConstants.RIGHT);
 		constraints= new GridBagConstraints();
 		constraints.gridx= 0;
@@ -427,16 +479,20 @@ public class GLCMClusteringFrame extends JFrame {
 		constraints.gridheight= 1;
 		constraints.weightx= 0.3;
 		panel.add(label3,constraints);
+		*/
 
 		JFormattedTextField textField2= new JFormattedTextField();
 		constraints= new GridBagConstraints();
-		constraints.gridx= 1;
+		constraints.gridx= 0;
 		constraints.gridy= 2;
 		constraints.gridwidth= 4;
 		constraints.gridheight= 1;
 		constraints.fill= GridBagConstraints.HORIZONTAL;
 		constraints.anchor= GridBagConstraints.LINE_END;
 		constraints.weightx= 0.7;
+		textField2.setBorder( BorderFactory.createTitledBorder(
+				BorderFactory.createEtchedBorder(EtchedBorder.RAISED, Color.GRAY,Color.DARK_GRAY), "#of iterations"
+		));
 		panel.add(textField2,constraints);
 
 		final JButton clusterIt= new JButton("Cluster");
