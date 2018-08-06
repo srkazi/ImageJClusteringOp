@@ -1,20 +1,10 @@
 import ij.IJ;
 import ij.ImagePlus;
-import ij.WindowManager;
-import ij.io.Opener;
 import ij.plugin.Duplicator;
-import ij.plugin.Grid;
-import ij.process.ByteProcessor;
-import ij.process.ImageProcessor;
-import ij.process.ShortProcessor;
-import net.imagej.Dataset;
 import net.imagej.DatasetService;
-import net.imagej.ImgPlus;
 import net.imagej.display.ImageDisplay;
 import net.imagej.display.OverlayService;
-import net.imagej.ops.Op;
 import net.imagej.ops.OpService;
-import net.imagej.ops.Ops;
 import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
@@ -22,29 +12,22 @@ import net.imglib2.img.ImgFactory;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.img.array.ArrayImgs;
 import net.imglib2.img.display.imagej.ImageJFunctions;
-import net.imglib2.img.imageplus.ImagePlusImg;
-import net.imglib2.img.imageplus.ImagePlusImgs;
 import net.imglib2.type.numeric.integer.ByteType;
 import net.imglib2.type.numeric.integer.UnsignedByteType;
 import org.apache.commons.math3.ml.clustering.CentroidCluster;
 import org.apache.commons.math3.ml.clustering.Cluster;
-import org.apache.log4j.helpers.UtilLoggingLevel;
 import org.scijava.app.StatusService;
 import org.scijava.command.CommandService;
 import org.scijava.log.LogService;
 import org.scijava.thread.ThreadService;
 import org.scijava.ui.UIService;
-import org.scijava.util.RealRect;
 
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
-import javax.swing.plaf.basic.BasicSplitPaneUI;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.lang.reflect.AnnotatedArrayType;
 import java.util.List;
-import java.util.Map;
 
 public class GLCMClusteringFrame extends JFrame {
 

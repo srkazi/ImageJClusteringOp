@@ -1,25 +1,12 @@
-import io.scif.img.IO;
-import net.imagej.ImageJ;
-import net.imglib2.img.Img;
-import net.imglib2.img.array.ArrayImgFactory;
-import net.imglib2.img.display.imagej.ImageJFunctions;
-import net.imglib2.type.numeric.integer.ByteType;
-import net.imglib2.type.numeric.integer.UnsignedByteType;
-import net.imglib2.type.numeric.real.FloatType;
-
 import ij.IJ;
 import ij.ImagePlus;
 import ij.plugin.Duplicator;
-import io.scif.img.IO;
 import net.imagej.ImageJ;
 import net.imglib2.RandomAccess;
 import net.imglib2.img.Img;
-import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.img.array.ArrayImgs;
 import net.imglib2.img.display.imagej.ImageJFunctions;
-import net.imglib2.type.numeric.integer.ByteType;
 import net.imglib2.type.numeric.integer.UnsignedByteType;
-import net.imglib2.type.numeric.real.FloatType;
 
 import java.util.Random;
 
@@ -31,8 +18,8 @@ public class MWE {
 		Random random = new Random();
 
 		long[] position = new long[3];
-		for (int x = 0; x < img.dimension(0); x ++) {
-			for (int y = 0; y < img.dimension(1); y ++) {
+		for (int x = 0; x < img.dimension(0); x++ ) {
+			for (int y = 0; y < img.dimension(1); y++ ) {
 				position[0] = x;
 				position[1] = y;
 
@@ -56,9 +43,8 @@ public class MWE {
 	}
 	public static void main(final String[] args) {
 		final ImageJ ij= new ImageJ();
-		ij.ui().showUI();
-
-		//ij.launch(args);
+		//ij.ui().showUI();
+		ij.launch(args);
 		new MWE();
 	}
 }
